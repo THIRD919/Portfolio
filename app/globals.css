@@ -1,0 +1,82 @@
+/**
+ * [ไฟล์] app/globals.css
+ * -----------------------------------------------------------------------
+ * หน้าที่: กำหนด Tailwind base + คลาสสำเร็จรูปที่ใช้ซ้ำหลายที่ทั้งเว็บ
+ * (เขียนเป็น @apply รวมคลาส Tailwind หลายอันไว้ในชื่อเดียว จะได้ไม่ต้อง
+ *  พิมพ์คลาสยาว ๆ ซ้ำทุกไฟล์)
+ *
+ * ถูก import ที่: app/layout.tsx (บรรทัดแรก ๆ ของไฟล์) เพียงที่เดียว
+ * มีผลกับทั้งเว็บเพราะ layout.tsx ครอบทุกหน้าไว้
+ *
+ * คลาสที่ประกาศไว้ที่นี่ ถูกใช้ต่อในไฟล์:
+ *   .section      -> ทุก <section> ใน components/hero.tsx, about.tsx, skills.tsx,
+ *                     projects.tsx, project-detail.tsx, app/contact/page.tsx
+ *   .eyebrow      -> ข้อความหัวข้อเล็กสีเน้น (ทุก section ด้านบน)
+ *   .card         -> การ์ดพื้นหลังโปร่งแสงมีเงา (about.tsx, skills.tsx, projects.tsx, contact)
+ *   .tag          -> ป้าย tag เทคโนโลยีเล็ก ๆ (skills.tsx, projects.tsx, project-detail.tsx)
+ *   .btn-primary  -> ปุ่มพื้นสีเน้น (hero.tsx ปุ่ม Download CV, project-detail.tsx ปุ่ม View Demo)
+ *   .btn-ghost    -> ปุ่มขอบใส (hero.tsx ปุ่ม Get in Touch)
+ *   .status-pill  -> โครงพื้นฐานของป้ายสถานะ (สีจริงกำหนดที่ components/status-pill.tsx)
+ * -----------------------------------------------------------------------
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ฟอนต์หลักของทั้งเว็บ: Kanit (โหลดผ่านลิงก์ Google Fonts ใน app/layout.tsx <head>)
+   รองรับทั้งภาษาไทยและอังกฤษในฟอนต์เดียวกัน ถ้าเน็ตช้า/ปิดใช้งาน จะ fallback
+   ไปที่ system-ui ของเครื่องผู้ใช้แทนอัตโนมัติ */
+:root {
+  --font-sans: "Kanit", system-ui, -apple-system, sans-serif;
+}
+
+/* เลื่อนหน้าจอแบบ smooth เวลากดลิงก์ anchor เช่น #about #skills */
+html {
+  scroll-behavior: smooth;
+}
+
+/* สีพื้นหลัง/ตัวอักษรหลักของทั้งเว็บ สลับตาม dark: อัตโนมัติ (คุมโดย components/theme-provider.tsx) */
+body {
+  @apply bg-white text-slate-900 dark:bg-[#0a0a12] dark:text-slate-100 transition-colors duration-300;
+}
+
+/* ระยะห่างมาตรฐานของแต่ละ section (padding บน-ล่าง, ความกว้างสูงสุด, จัดกึ่งกลาง) */
+.section {
+  @apply mx-auto max-w-6xl px-6 py-24 md:px-10;
+}
+
+/* ข้อความหัวข้อเล็กสีเน้น ตัวพิมพ์ใหญ่ เว้นระยะตัวอักษร (เช่น "รู้จักผม", "ความเชี่ยวชาญ") */
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.2em] text-accent;
+}
+
+/* การ์ดมาตรฐาน: ขอบบาง พื้นหลังโปร่งแสง เงาบาง มี hover ยกขึ้นเล็กน้อย */
+.card {
+  @apply rounded-2xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur transition
+    hover:-translate-y-1 hover:shadow-lg
+    dark:border-white/10 dark:bg-white/5;
+}
+
+/* ป้าย tag เล็ก ๆ ใช้โชว์ชื่อเทคโนโลยี (เช่น "Next.js", "PostgreSQL") */
+.tag {
+  @apply rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700
+    dark:border-white/10 dark:bg-white/10 dark:text-slate-200;
+}
+
+/* ปุ่มหลัก พื้นสีเน้น (accent) ใช้กับ action สำคัญที่สุดของแต่ละหน้า */
+.btn-primary {
+  @apply inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white
+    shadow-md shadow-accent/30 transition hover:bg-accent-dark hover:shadow-lg;
+}
+
+/* ปุ่มรอง ขอบใส ใช้กับ action รองลงมา */
+.btn-ghost {
+  @apply inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium
+    text-slate-700 transition hover:border-accent hover:text-accent
+    dark:border-white/20 dark:text-slate-200;
+}
+
+/* โครงพื้นฐานของป้ายสถานะโปรเจกต์ (สีเฉพาะแต่ละสถานะกำหนดที่ components/status-pill.tsx) */
+.status-pill {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+}
