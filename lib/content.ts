@@ -297,9 +297,8 @@ export const contact = {
  * footer.links: ลิงก์โซเชียลท้ายเว็บทุกหน้า (ตั้งใจไม่มี GitHub เช่นกัน)
  */
 export const footer = {
-  // [ใส่ลิงก์จริงของคุณ ไม่มี GitHub]
+  // [ใส่ลิงก์จริงของคุณ ไม่มี GitHub — ตัด LinkedIn ออกแล้วตามที่ผู้ใช้ขอ]
   links: [
-    { label: "LinkedIn", href: "[https://www.linkedin.com/in/your-handle]" },
     { label: "Facebook", href: "https://www.facebook.com/suracheat.pongpa" },
   ],
   credit: { th: "สร้างด้วย Next.js & Tailwind CSS", en: "Crafted with Next.js & Tailwind CSS" } as Bi,
