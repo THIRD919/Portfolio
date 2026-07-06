@@ -214,7 +214,10 @@ export type Project = {
   // เว้นว่างไว้ก่อนได้ ใส่ทีหลังตอน deploy จริงแล้ว (project-detail.tsx จะโชว์ข้อความ
   // "ยังไม่ได้ขึ้น Host" แทนปุ่ม demo ถ้ายังว่างอยู่)
   demoUrl?: string;
-  image?: string;
+  // ภาพตัวอย่าง (สกรีนช็อต) ของโปรเจกต์ ใส่ได้หลายภาพ แสดงเป็นแกลเลอรีที่หน้ารายละเอียด
+  // (components/project-detail.tsx) วิธีใส่จริง: เอาไฟล์ภาพไปวางที่ public/images/...
+  // แล้วใส่ path ทุกภาพไว้ใน array นี้ (เว้นว่าง/ไม่ใส่ก็ได้ ถ้ายังไม่มีภาพ)
+  images?: string[];
 };
 
 /**
@@ -234,20 +237,24 @@ export const projectsSection = {
   // [เพิ่ม/แก้โปรเจกต์จริงของคุณที่นี่ — แต่ละอันจะมีหน้าของตัวเองที่ /projects/{slug}]
   items: [
     {
-      slug: "project-one",
-      title: "[ชื่อโปรเจกต์ 1]",
-      status: "planned",
+      // โปรเจกต์จริงตัวแรก: ระบบจองห้องเรียนของโรงเรียนสอนภาษา iGenius เชียงใหม่
+      // deploy จริงแล้วที่ demoUrl ด้านล่าง (ยังพัฒนาต่อเนื่องอยู่ จึง status เป็น in-progress)
+      slug: "igenius-classroom-booking",
+      title: "iGenius Classroom Booking",
+      status: "in-progress",
       summary: {
-        th: "[อธิบายสั้น ๆ 1 บรรทัดว่าโปรเจกต์นี้คืออะไร]",
-        en: "[One-line summary of what this project is]",
+        th: "ระบบจองห้องเรียนออนไลน์สำหรับโรงเรียนสอนภาษา iGenius จังหวัดเชียงใหม่",
+        en: "Online classroom booking system for iGenius language school in Chiang Mai",
       },
       description: {
-        th: "[อธิบายรายละเอียด ทำอะไร แก้ปัญหาอะไร ใช้เทคโนโลยีอะไรบ้าง สถานะปัจจุบันเป็นอย่างไร]",
-        en: "[Detailed description what it does, what problem it solves, tech used, current status]",
+        th: "ระบบจองห้องเรียนออนไลน์สำหรับโรงเรียนสอนภาษา iGenius จังหวัดเชียงใหม่ รองรับผู้ใช้งาน 3 บทบาท ได้แก่ ครู เจ้าหน้าที่ และผู้ดูแลระบบ (Admin) แต่ละบทบาทมีสิทธิ์การเข้าถึงและฟังก์ชันที่แตกต่างกัน ช่วยให้การจัดสรรห้องเรียนสะดวกขึ้นและลดปัญหาการจองซ้ำซ้อน ปัจจุบันอยู่ระหว่างพัฒนาต่อเนื่อง (v1.0)",
+        en: "An online classroom booking system built for iGenius, a language school in Chiang Mai. Supports three user roles — Teacher, Staff, and Admin — each with different access levels and permissions, streamlining classroom scheduling and reducing booking conflicts. Currently in active development (v1.0).",
       },
-      tags: ["Next.js"],
-      demoUrl: "",
-      image: "",
+      tags: ["Next.js", "TypeScript", "Node.js", "MySQL"],
+      demoUrl: "https://igenius-fixed.vercel.app/",
+      // ไฟล์ภาพจริงที่ผู้ใช้วางไว้ที่ public/images/ (a1/a2/a3.jpg) — ไม่ได้อยู่ในโฟลเดอร์ย่อย
+      // projects/igenius/ ตามที่เตรียมไว้แต่แรก จึงแก้ path ให้ตรงกับตำแหน่งไฟล์จริงตรงนี้แทน
+      images: ["/images/a1.jpg", "/images/a2.jpg", "/images/a3.jpg"],
     },
     {
       slug: "project-two",
@@ -263,7 +270,7 @@ export const projectsSection = {
       },
       tags: ["JavaScript"],
       demoUrl: "",
-      image: "",
+      images: [],
     },
   ] as Project[],
 };

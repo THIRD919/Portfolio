@@ -16,6 +16,7 @@
  */
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/language-context";
 import { Project, projectsSection } from "@/lib/content";
@@ -24,6 +25,20 @@ import StatusPill from "./status-pill";
 // รับ project เป็น prop เดียว (ชนิด Project มาจาก lib/content.ts)
 export default function ProjectDetail({ project }: { project: Project }) {
   const { lang } = useLanguage();
+  const images = project.images ?? [];
+
+  // สไลด์โชว์ภาพทีละ 1 รูป เปลี่ยนภาพอัตโนมัติทุก 3 วินาที (3000ms) วนลูปกลับไปภาพแรก
+  // เมื่อถึงภาพสุดท้าย ถ้ามีภาพแค่ 1 รูปหรือไม่มีเลย จะไม่ตั้ง interval (ไม่มีอะไรให้สไลด์)
+  const [activeImage, setActiveImage] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveImage((prev) => (prev + 1) % images.length);
+    }, 3000);
+    // เคลียร์ timer ทุกครั้งที่ effect รันใหม่/component ถูก unmount กัน timer ค้าง
+    return () => clearInterval(timer);
+  }, [images.length]);
 
   return (
     <section className="section max-w-3xl">
@@ -41,19 +56,44 @@ export default function ProjectDetail({ project }: { project: Project }) {
         {project.summary[lang]}
       </p>
 
-      {/* กรอบภาพตัวอย่าง/mockup: ถ้ายังไม่มีไฟล์ภาพ (project.image ว่าง) จะโชว์ข้อความแทน
-          วิธีใส่ภาพจริง: เพิ่ม path ที่ field image ของโปรเจกต์นั้นใน lib/content.ts
-          แล้ววางไฟล์จริงไว้ที่ public/ ตาม path ที่ระบุ */}
-      <div className="mt-8 aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
-        {project.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-slate-400 dark:text-slate-500">
-            {lang === "th" ? "ยังไม่มีภาพตัวอย่าง" : "No preview image yet"}
+      {/* สไลด์โชว์ภาพตัวอย่าง (สกรีนช็อต) ของโปรเจกต์ — โชว์ทีละ 1 รูป เปลี่ยนเองทุก 3 วิ
+          (ดู useEffect ด้านบนที่ตั้ง setInterval ไว้) ถ้ายังไม่มีภาพเลย (images ว่าง/ไม่มี)
+          จะโชว์ข้อความแทน วิธีใส่ภาพจริง: เอาไฟล์ไปวางที่ public/images/... แล้วใส่ path
+          ทุกภาพไว้ใน field images (array) ของโปรเจกต์นั้นใน lib/content.ts */}
+      {images.length > 0 ? (
+        <div className="mt-8">
+          <div className="aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={activeImage}
+              src={images[activeImage]}
+              alt={`${project.title} screenshot ${activeImage + 1}`}
+              className="h-full w-full object-cover"
+            />
           </div>
-        )}
-      </div>
+          {/* จุดบอกตำแหน่งภาพ (dots) — กดเพื่อข้ามไปดูภาพนั้นได้เลย ไม่ต้องรอสไลด์เอง
+              โชว์เฉพาะตอนมีภาพมากกว่า 1 รูป (ภาพเดียวไม่มีอะไรให้เลือก) */}
+          {images.length > 1 && (
+            <div className="mt-3 flex justify-center gap-2">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  aria-label={`Screenshot ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === activeImage ? "w-6 bg-accent" : "w-1.5 bg-slate-300 dark:bg-white/20"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-8 flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 text-sm text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500">
+          {lang === "th" ? "ยังไม่มีภาพตัวอย่าง" : "No preview image yet"}
+        </div>
+      )}
 
       {/* tag เทคโนโลยีที่ใช้ในโปรเจกต์นี้ (เหมือนที่การ์ดพรีวิวโชว์) */}
       <div className="mt-8 flex flex-wrap gap-2">
