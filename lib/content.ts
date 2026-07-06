@@ -38,8 +38,9 @@ export const profile = {
   // ยังไม่มีข้อมูล ใส่ทีหลังได้ (โชว์ที่ about.tsx และ contact/page.tsx)
   phone: "[098-018-7517]",
   email: "[Suracheatm02@gmail.com]",
-  // วางไฟล์ CV จริงไว้ที่ public/cv.pdf แล้วปุ่ม Download CV (hero.tsx) จะใช้งานได้ทันที
-  cvFile: "/cv.pdf",
+  // ไฟล์ CV จริง วางไว้ที่ public/CV_Suracheat_Inta.pdf แล้ว ปุ่ม Download CV (hero.tsx)
+  // จะดึงไฟล์นี้มาให้ดาวน์โหลดโดยตรง (เก็บชื่อไฟล์เดิมไว้ตามที่ผู้ใช้อัปโหลดมา)
+  cvFile: "/CV_Suracheat_Inta.pdf",
   // วางรูปโปรไฟล์ไว้ที่ public/images/profile1.jpg แล้ว hero.tsx จะโชว์รูปนี้แทนตัวอักษรย่อ
   profileImage: "/images/profile1.jpg",
 };
