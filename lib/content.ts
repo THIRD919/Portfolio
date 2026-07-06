@@ -75,20 +75,35 @@ export const about = {
     detail: { th: "GPAX 3.25 / ก.พ. 2027", en: "GPAX 3.25 / FEB 2027" } as Bi,
   },
   stats: [
-    { value: "0+", label: { th: "โปรเจกต์ที่สร้าง", en: "Projects Built" } as Bi },
-    { value: "0+", label: { th: "เทคโนโลยีหลัก", en: "Core Technologies" } as Bi },
-    { value: "0", label: { th: "ฝึกงาน", en: "Internships" } as Bi },
-    { value: "0+", label: { th: "ภาษาโปรแกรมมิ่ง", en: "Programming Languages" } as Bi },
+    { value: "5+", label: { th: "โปรเจกต์ที่สร้าง", en: "Projects Built" } as Bi },
+    { value: "15+", label: { th: "เทคโนโลยีหลัก", en: "Core Technologies" } as Bi },
+    { value: "10+", label: { th: "โปรเจกต์กลุ่มในวิชาเรียน", en: "Class Group Projects" } as Bi },
+    { value: "4+", label: { th: "ภาษาโปรแกรมมิ่ง", en: "Programming Languages" } as Bi },
   ],
 };
 
 // ชนิดข้อมูลของ 1 หมวดหมู่ทักษะ ใน skillsSection.categories ด้านล่าง
+// แต่ละหมวดมี "kind" กำหนดรูปแบบภาพประกอบในการ์ด (ดูการ render จริงที่ components/skills.tsx):
+//   "hierarchy"   -> รายการลำดับขั้นแบบย่อหน้า (ใช้กับ Frontend)
+//   "flow"        -> ลูกศรขั้นตอนต่อกัน (ใช้กับ Backend)
+//   "database"    -> รายชื่อฐานข้อมูล + แถบสีประกอบ (ใช้กับ Database)
+//   "grid"        -> กริดปุ่มเครื่องมือ 2 คอลัมน์ (ใช้กับ Tools)
+//   "proficiency" -> แถวระดับภาษา/ซอฟต์สกิล (ใช้กับ Languages & Soft Skills)
+//   "plain"       -> การ์ดพื้นฐาน (แค่ description + tags) เผื่อเพิ่มหมวดใหม่ที่ยังไม่มีภาพประกอบเฉพาะ
 export type SkillCategory = {
   eyebrow: Bi;
   title: Bi;
-  description: Bi;
   tags: string[];
-};
+  // description ใช้เฉพาะตอน kind เป็น "plain" เท่านั้น (หมวดอื่นใช้ข้อมูลเฉพาะของตัวเองแทน)
+  description?: Bi;
+} & (
+  | { kind: "hierarchy"; items: { label: Bi; indent: number }[] }
+  | { kind: "flow"; steps: Bi[]; caption: Bi }
+  | { kind: "database"; items: { name: string; desc: Bi; level: number }[] }
+  | { kind: "grid"; items: { name: string; desc: Bi }[] }
+  | { kind: "proficiency"; items: { label: Bi; desc: Bi }[] }
+  | { kind: "plain" }
+);
 
 /**
  * skillsSection — หมวดหมู่ทักษะทั้งหมด
@@ -104,36 +119,69 @@ export const skillsSection = {
     en: "Core technologies I use to build applications.",
   } as Bi,
   // [แก้รายการด้านล่างให้ตรงกับสกิลจริงของคุณ]
+  // ทุกหมวดมี tags (แสดงเป็นป้ายท้ายการ์ด) และข้อมูลเฉพาะตาม kind (ดูคำอธิบายที่ type ด้านบน)
   categories: [
     {
-      eyebrow: { th: "หน้าตาแอปพลิเคชัน", en: "Frontend Interfaces" } as Bi,
-      title: { th: "การพัฒนา Frontend", en: "Frontend Development" } as Bi,
-      description: { th: "[แก้เป็นสแต็กจริงของคุณ]", en: "[Replace with your real stack]" } as Bi,
-      tags: ["HTML", "CSS", "JavaScript"],
+      eyebrow: { th: "อินเทอร์เฟซผู้ใช้", en: "User Interface" } as Bi,
+      title: { th: "การพัฒนาระบบหน้าบ้าน", en: "Frontend Development" } as Bi,
+      kind: "hierarchy",
+      // โครงสร้างแบบต้นไม้: App เป็นราก (indent 0) แล้วแตกกิ่งลูก (indent 1)
+      // และหลานที่ลึกลงไปอีกชั้น (indent 2) ตามภาพตัวอย่างที่ผู้ใช้ส่งมา
+      items: [
+        { label: { th: "App", en: "App" } as Bi, indent: 0 },
+        { label: { th: "เลย์เอาต์ - รองรับทุกหน้าจอ", en: "Layout - Responsive on all screens" } as Bi, indent: 1 },
+        { label: { th: "ระบบเส้นทาง - Next.js", en: "Routing - Next.js" } as Bi, indent: 1 },
+        { label: { th: "คอมโพเนนต์ - TypeScript", en: "Components - TypeScript" } as Bi, indent: 2 },
+      ],
+      tags: ["Next.js", "React.js", "TypeScript", "Tailwind CSS"],
     },
     {
       eyebrow: { th: "บริการฝั่งเซิร์ฟเวอร์", en: "Backend Services" } as Bi,
       title: { th: "การพัฒนา Backend", en: "Backend Development" } as Bi,
-      description: { th: "[แก้เป็นสแต็กจริงของคุณ]", en: "[Replace with your real stack]" } as Bi,
-      tags: ["Node.js"],
+      kind: "flow",
+      // ขั้นตอนการทำงานของ Backend แสดงเป็นลูกศรต่อกัน (แก้ลำดับ/จำนวนขั้นได้ตามจริง)
+      steps: [
+        { th: "คำขอ", en: "Request" } as Bi,
+        { th: "การประมวลผล", en: "Processing" } as Bi,
+        { th: "ฐานข้อมูล", en: "Database" } as Bi,
+      ],
+      caption: { th: "บริการฝั่งเซิร์ฟเวอร์แบบ RESTful API", en: "RESTful API backend services" } as Bi,
+      tags: ["Node.js", "PHP", "Python"],
     },
     {
       eyebrow: { th: "ระบบข้อมูล", en: "Data Systems" } as Bi,
-      title: { th: "ฐานข้อมูล", en: "Databases" } as Bi,
-      description: { th: "[แก้เป็นสแต็กจริงของคุณ]", en: "[Replace with your real stack]" } as Bi,
-      tags: ["MySQL"],
+      title: { th: "ฐานข้อมูลและแคช", en: "Database & Cache" } as Bi,
+      kind: "database",
+      // level (0-100) เป็นแค่แถบสีประกอบสายตา ไม่ใช่ตัวเลขวัดผลจริง ปรับได้ตามชอบ
+      items: [
+        { name: "PostgreSQL", desc: { th: "ฐานข้อมูลเชิงสัมพันธ์ (Relational)", en: "Relational Database" } as Bi, level: 50 },
+        { name: "MongoDB", desc: { th: "ฐานข้อมูลแบบเอกสาร (Documents)", en: "Document Database" } as Bi, level: 75 },
+        { name: "MySQL", desc: { th: "ฐานข้อมูลเชิงสัมพันธ์ (Relational)", en: "Relational Database" } as Bi, level: 85 },
+      ],
+      tags: ["PostgreSQL", "MongoDB", "MySQL"],
     },
     {
-      eyebrow: { th: "เครื่องมือพัฒนา", en: "Development Toolkit" } as Bi,
-      title: { th: "เครื่องมือ", en: "Tools" } as Bi,
-      description: { th: "[แก้เป็นเครื่องมือจริงของคุณ]", en: "[Replace with your real tools]" } as Bi,
-      tags: ["Git", "VS Code"],
+      eyebrow: { th: "ชุดเครื่องมือ", en: "Toolkit" } as Bi,
+      title: { th: "เครื่องมือพัฒนา", en: "Development Tools" } as Bi,
+      kind: "grid",
+      items: [
+        { name: "Git", desc: { th: "การควบคุมเวอร์ชัน", en: "Version control" } as Bi },
+        { name: "Postman", desc: { th: "ทดสอบ API", en: "API testing" } as Bi },
+        { name: "VS Code", desc: { th: "เครื่องมือแก้ไขโค้ด", en: "Code editor" } as Bi },
+        { name: "Figma", desc: { th: "ออกแบบหน้าเว็บ", en: "Web design" } as Bi },
+      ],
+      tags: ["Git", "Postman", "VS Code", "Figma"],
     },
     {
       eyebrow: { th: "การสื่อสารและการเรียนรู้", en: "Communication & Learning" } as Bi,
-      title: { th: "ภาษาและซอฟต์สกิล", en: "Languages & Soft Skills" } as Bi,
-      description: { th: "[แก้ตามความจริง]", en: "[Replace with your real skills]" } as Bi,
-      tags: ["Thai", "English"],
+      title: { th: "ภาษาและทักษะอื่นๆ", en: "Languages & Other Skills" } as Bi,
+      kind: "proficiency",
+      items: [
+        { label: { th: "ภาษาไทย", en: "Thai" } as Bi, desc: { th: "เจ้าของภาษา", en: "Native" } as Bi },
+        { label: { th: "ภาษาอังกฤษ", en: "English" } as Bi, desc: { th: "พอใช้", en: "Intermediate" } as Bi },
+        { label: { th: "การปรับตัว", en: "Adaptability" } as Bi, desc: { th: "มีความยืดหยุ่นและปรับตัวได้สูง", en: "Highly flexible and adaptable" } as Bi },
+      ],
+      tags: ["Thai", "English", "Adaptability", "Learning"],
     },
   ] as SkillCategory[],
 };
@@ -231,10 +279,9 @@ export const contact = {
     th: "สนใจร่วมงานหรืออยากพูดคุย ทักมาได้เลยครับ",
     en: "Open to opportunities and always happy to talk, reach out anytime.",
   } as Bi,
-  // [ใส่ลิงก์จริงของคุณ ไม่มี GitHub]
+  // [ใส่ลิงก์จริงของคุณ ไม่มี GitHub — ตัด LinkedIn ออกแล้วตามที่ผู้ใช้ขอ]
   links: [
-    { label: "LinkedIn", href: "[https://www.linkedin.com/in/your-handle]" },
-    { label: "Facebook", href: "[https://www.facebook.com/your-handle]" },
+    { label: "Facebook", href: "https://www.facebook.com/suracheat.pongpa" },
   ],
 };
 
@@ -246,7 +293,7 @@ export const footer = {
   // [ใส่ลิงก์จริงของคุณ ไม่มี GitHub]
   links: [
     { label: "LinkedIn", href: "[https://www.linkedin.com/in/your-handle]" },
-    { label: "Facebook", href: "[https://www.facebook.com/your-handle]" },
+    { label: "Facebook", href: "https://www.facebook.com/suracheat.pongpa" },
   ],
   credit: { th: "สร้างด้วย Next.js & Tailwind CSS", en: "Crafted with Next.js & Tailwind CSS" } as Bi,
 };

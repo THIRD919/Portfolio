@@ -12,12 +12,12 @@
  */
 "use client";
 
-import { useLanguage } from "@/lib/language-context";
 import { profile, footer } from "@/lib/content";
 import Logo from "./logo";
 
+// หมายเหตุ: ไม่ต้อง useLanguage() ในไฟล์นี้แล้ว เพราะข้อความด้านล่างทั้งหมด
+// (ลิขสิทธิ์ + เครดิต) ถูกฟิกเป็นภาษาอังกฤษตายตัว ไม่เปลี่ยนตามภาษาที่เลือก
 export default function Footer() {
-  const { lang } = useLanguage();
   const year = new Date().getFullYear(); // ปีปัจจุบัน คำนวณสดทุกครั้งที่โหลดหน้า
 
   return (
@@ -42,10 +42,12 @@ export default function Footer() {
         ))}
       </div>
 
+      {/* ฟิกเป็นภาษาอังกฤษเสมอ ไม่เปลี่ยนตาม lang (ตามที่ผู้ใช้ขอ) — ใช้ .en ตรง ๆ
+          แทนที่จะ index ด้วย [lang] เหมือนจุดอื่นในเว็บ */}
       <p className="mt-6 text-xs text-slate-400 dark:text-slate-500">
-        &copy; {year} {profile.name[lang]}. {lang === "th" ? "สงวนลิขสิทธิ์" : "All rights reserved."}
+        &copy; {year} {profile.name.en}. All rights reserved.
       </p>
-      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{footer.credit[lang]}</p>
+      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{footer.credit.en}</p>
     </footer>
   );
 }
